@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ParasitoQuiz — Micróbiologia & Parasitologia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f0d;
+    --surface: #111a14;
+    --surface2: #162019;
+    --border: #1f3024;
+    --accent: #4ade80;
+    --accent-dim: #22c55e33;
+    --accent2: #86efac;
+    --warn: #f97316;
+    --warn-dim: #f9731622;
+    --danger: #f87171;
+    --danger-dim: #f8717122;
+    --text: #e8f5ec;
+    --text-muted: #7a9e84;
+    --text-dim: #4a6b52;
+    --true-color: #4ade80;
+    --false-color: #f87171;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* — HEADER — */
+  header {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-icon {
+    width: 42px; height: 42px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .logo-icon svg { width: 24px; height: 24px; }
+  .logo-text h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .logo-text p {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* — MAIN — */
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+
+  /* — START SCREEN — */
+  #start-screen {
+    text-align: center;
+    padding: 20px 0 10px;
+  }
+  .start-hero {
+    margin-bottom: 32px;
+  }
+  .start-hero h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    line-height: 1.15;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+  .start-hero h2 span { color: var(--accent); }
+  .start-hero p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 24px 0;
+  }
+  .topic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .topic-card .emoji { font-size: 1.6rem; display: block; margin-bottom: 5px; }
+  .topic-card span {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .rules {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    text-align: left;
+    margin-bottom: 24px;
+  }
+  .rules p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    padding-left: 14px;
+    position: relative;
+  }
+  .rules p::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--accent);
+  }
+  .rules p:last-child { margin-bottom: 0; }
+
+  .btn-start {
+    background: var(--accent);
+    color: #0a0f0d;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 40px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: opacity .2s, transform .15s;
+    width: 100%;
+    max-width: 320px;
+  }
+  .btn-start:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-start:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* — LOADING — */
+  #loading-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 20px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading-screen p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  #loading-screen strong {
+    display: block;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  /* — QUIZ — */
+  #quiz-screen { display: none; }
+
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 99px;
+    height: 4px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width .4s ease;
+  }
+
+  .q-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .q-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .q-category {
+    font-size: 0.72rem;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-weight: 500;
+  }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 20px;
+    margin-bottom: 16px;
+  }
+  .question-text {
+    font-size: 0.96rem;
+    line-height: 1.65;
+    color: var(--text);
+    font-weight: 400;
+  }
+  .question-text strong { color: var(--accent2); font-weight: 600; }
+
+  .answer-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .btn-answer {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: 0.02em;
+  }
+  .btn-answer:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn-answer.selected-true {
+    background: #052a10;
+    border-color: var(--true-color);
+    color: var(--true-color);
+  }
+  .btn-answer.selected-false {
+    background: #2a0505;
+    border-color: var(--false-color);
+    color: var(--false-color);
+  }
+  .btn-answer:disabled { cursor: default; }
+
+  /* Justification */
+  .justify-section {
+    display: none;
+    margin-bottom: 14px;
+  }
+  .justify-section label {
+    font-size: 0.8rem;
+    color: var(--warn);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 7px;
+  }
+  .justify-section label span { color: var(--text-muted); font-weight: 400; text-transform: none; letter-spacing: 0; }
+  .justify-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--warn-dim);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    padding: 12px 14px;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .justify-input:focus { border-color: var(--warn); }
+  .justify-input::placeholder { color: var(--text-dim); }
+
+  .btn-confirm {
+    background: var(--surface);
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    border-radius: 10px;
+    padding: 11px 28px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all .2s;
+    width: 100%;
+  }
+  .btn-confirm:hover:not(:disabled) {
+    background: var(--accent);
+    color: #0a0f0d;
+  }
+  .btn-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Feedback */
+  .feedback-box {
+    display: none;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .feedback-box.correct {
+    background: #052a10;
+    border: 1px solid var(--true-color);
+  }
+  .feedback-box.incorrect {
+    background: #2a0505;
+    border: 1px solid var(--false-color);
+  }
+  .feedback-box .fb-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .feedback-box.correct .fb-title { color: var(--true-color); }
+  .feedback-box.incorrect .fb-title { color: var(--false-color); }
+  .feedback-box p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .feedback-box .ai-badge {
+    font-size: 0.68rem;
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 2px 7px;
+    border-radius: 99px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-next {
+    background: var(--accent);
+    color: #0a0f0d;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 28px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity .2s;
+    display: none;
+  }
+  .btn-next:hover { opacity: 0.85; }
+
+  /* — RESULTS — */
+  #result-screen { display: none; }
+
+  .result-hero {
+    text-align: center;
+    padding: 24px 0 28px;
+  }
+  .score-ring {
+    width: 110px; height: 110px;
+    margin: 0 auto 16px;
+    position: relative;
+  }
+  .score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .score-ring circle {
+    fill: none;
+    stroke-width: 7;
+    stroke-linecap: round;
+  }
+  .score-ring .bg { stroke: var(--border); }
+  .score-ring .fg { stroke: var(--accent); transition: stroke-dashoffset 1s ease; }
+  .score-number {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .score-number span { font-size: 0.75rem; color: var(--text-muted); font-weight: 400; display: block; }
+
+  .result-hero h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+  }
+  .result-hero p { color: var(--text-muted); font-size: 0.85rem; }
+
+  .review-list { margin-bottom: 24px; }
+  .review-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .review-item.r-correct { border-left: 3px solid var(--true-color); }
+  .review-item.r-incorrect { border-left: 3px solid var(--false-color); }
+  .review-q {
+    font-size: 0.82rem;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .review-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+  }
+  .review-meta span {
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 600;
+  }
+  .tag-correct { background: #052a10; color: var(--true-color); }
+  .tag-incorrect { background: #2a0505; color: var(--false-color); }
+  .tag-answer { background: var(--surface2); color: var(--text-muted); }
+  .review-feedback {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-restart {
+    background: var(--accent);
+    color: #0a0f0d;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 40px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity .2s;
+    margin-top: 8px;
+  }
+  .btn-restart:hover { opacity: 0.85; }
+
+  /* — UTILITIES — */
+  .hidden { display: none !important; }
+
+  @media (max-width: 480px) {
+    .topics-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .topic-card { padding: 10px 6px; }
+    .topic-card .emoji { font-size: 1.3rem; }
+    .start-hero h2 { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#0a0f0d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 2C8 2 4 5 4 9c0 3 1.5 5.5 4 7l4 3 4-3c2.5-1.5 4-4 4-7 0-4-4-7-8-7z"/>
+      <path d="M8 9c1 1.5 2.5 2 4 2s3-.5 4-2"/>
+    </svg>
+  </div>
+  <div class="logo-text">
+    <h1>ParasitoQuiz</h1>
+    <p>Micróbiologia &amp; Parasitologia — Final</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- START -->
+  <div id="start-screen">
+    <div class="start-hero">
+      <h2>Prepare-se para a<br><span>prova final</span></h2>
+      <p>10 questões de Verdadeiro ou Falso com variação aleatória a cada simulado. Se for Falso, justifique.</p>
+    </div>
+
+    <div class="topics-grid">
+      <div class="topic-card"><span class="emoji">🪱</span><span>Helmintos</span></div>
+      <div class="topic-card"><span class="emoji">🦠</span><span>Protozoários</span></div>
+      <div class="topic-card"><span class="emoji">🕷️</span><span>Ectoparasitas</span></div>
+    </div>
+
+    <div class="rules">
+      <p>As questões são geradas por IA com variação a cada sessão</p>
+      <p>Responda Verdadeiro ou Falso para cada afirmação</p>
+      <p>Se Falso: justifique identificando o erro da afirmação</p>
+      <p>Receba feedback detalhado ao final</p>
+    </div>
+
+    <button class="btn-start" id="btn-start">Iniciar Simulado</button>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <strong>Gerando questões com IA…</strong>
+    <p>Variando doenças, vetores e hospedeiros para este simulado</p>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz-screen">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+    </div>
+
+    <div class="q-header">
+      <span class="q-number" id="q-number">QUESTÃO 1 / 10</span>
+      <span class="q-category" id="q-category">Helminto</span>
+    </div>
+
+    <div class="question-card">
+      <p class="question-text" id="question-text">Carregando…</p>
+    </div>
+
+    <div class="answer-btns">
+      <button class="btn-answer" id="btn-true" onclick="selectAnswer(true)">✓ VERDADEIRO</button>
+      <button class="btn-answer" id="btn-false" onclick="selectAnswer(false)">✗ FALSO</button>
+    </div>
+
+    <div class="justify-section" id="justify-section">
+      <label>Justificativa obrigatória <span>— identifique o erro da afirmação</span></label>
+      <textarea class="justify-input" id="justify-input" placeholder="Ex: O vetor correto é o Aedes aegypti, não o Anopheles…"></textarea>
+    </div>
+
+    <button class="btn-confirm" id="btn-confirm" onclick="confirmAnswer()" disabled>Confirmar Resposta</button>
+
+    <div class="feedback-box" id="feedback-box">
+      <div class="fb-title">
+        <span id="fb-icon"></span>
+        <span id="fb-title-text"></span>
+        <span class="ai-badge">IA</span>
+      </div>
+      <p id="fb-body"></p>
+    </div>
+
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Próxima questão →</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="result-screen">
+    <div class="result-hero">
+      <div class="score-ring">
+        <svg viewBox="0 0 100 100">
+          <circle class="bg" cx="50" cy="50" r="44"/>
+          <circle class="fg" id="score-circle" cx="50" cy="50" r="44"
+            stroke-dasharray="276.46"
+            stroke-dashoffset="276.46"/>
+        </svg>
+        <div class="score-number" id="score-number">0<span>pontos</span></div>
+      </div>
+      <h2 id="result-title">Resultado</h2>
+      <p id="result-sub">—</p>
+    </div>
+
+    <div class="review-list" id="review-list"></div>
+
+    <button class="btn-restart" onclick="restart()">↺ Novo Simulado</button>
+  </div>
+
+</main>
+
+<script>
+// =============================================
+// BANCO DE QUESTÕES BASE (30+ questões, 10 sorteadas)
+// =============================================
+const QUESTION_BANK = [
+  // HELMINTOS
+  {
+    category: "Helminto",
+    variants: [
+      { text: "A <strong>Taenia solium</strong> tem o porco como hospedeiro intermediário e o humano como hospedeiro definitivo.", answer: true, explanation: "Correto. O ciclo da T. solium envolve o porco (hospedeiro intermediário, com cisticercos no músculo) e o humano (hospedeiro definitivo, com tênia adulta no intestino)." },
+      { text: "A <strong>Taenia saginata</strong> tem o porco como hospedeiro intermediário e o humano como hospedeiro definitivo.", answer: false, explanation: "Erro: a T. saginata tem o BOI (bovino) como hospedeiro intermediário, não o porco. O porco é o intermediário da T. solium." },
+      { text: "A <strong>Taenia solium</strong> tem o bovino como hospedeiro intermediário e o humano como hospedeiro definitivo.", answer: false, explanation: "Erro: o hospedeiro intermediário da T. solium é o PORCO. O bovino é o intermediário da T. saginata." },
+    ]
+  },
+  {
+    category: "Helminto",
+    variants: [
+      { text: "A <strong>neurocisticercose</strong> é causada pela ingestão de ovos de Taenia solium, que migram para o sistema nervoso central.", answer: true, explanation: "Correto. A neurocisticercose ocorre quando o humano age como hospedeiro intermediário acidental, ingerindo ovos de T. solium que desenvolvem cisticercos no SNC." },
+      { text: "A <strong>neurocisticercose</strong> é causada pela ingestão de ovos de Taenia saginata, que migram para o sistema nervoso central.", answer: false, explanation: "Erro: a neurocisticercose é causada por ovos de T. SOLIUM, não T. saginata. A T. saginata não causa cisticercose em humanos." },
+    ]
+  },
+  {
+    category: "Helminto",
+    variants: [
+      { text: "A <strong>ancilostomíase</strong> (amarelão) é causada por Ancylostoma duodenale e Necator americanus, com penetração ativa da larva pela pele.", answer: true, explanation: "Correto. As larvas filarióides (L3) penetram ativamente pela pele, migram pelos pulmões e se fixam no intestino delgado." },
+      { text: "A <strong>ascaridíase</strong> é causada por Ancylostoma duodenale, com penetração ativa da larva pela pele.", answer: false, explanation: "Erro duplo: a ascaridíase é causada por Ascaris lumbricoides, e sua infecção ocorre por INGESTÃO de ovos, não penetração cutânea." },
+    ]
+  },
+  {
+    category: "Helminto",
+    variants: [
+      { text: "Na <strong>esquistossomose mansônica</strong>, o caramujo Biomphalaria glabrata atua como hospedeiro intermediário, liberando cercárias que penetram na pele do humano.", answer: true, explanation: "Correto. O Biomphalaria é o hospedeiro intermediário; as cercárias liberadas na água penetram ativamente pela pele e se transformam em esquistossômulos." },
+      { text: "Na <strong>esquistossomose mansônica</strong>, o caramujo Melanoides tuberculata atua como hospedeiro intermediário, liberando cercárias que penetram na pele do humano.", answer: false, explanation: "Erro: o hospedeiro intermediário correto é o caramujo do gênero BIOMPHALARIA (ex: B. glabrata). O Melanoides é intermediário de outros parasitos (ex: Clonorchis)." },
+    ]
+  },
+  {
+    category: "Helminto",
+    variants: [
+      { text: "A <strong>filariose linfática</strong> causada por Wuchereria bancrofti tem o mosquito Culex quinquefasciatus como principal vetor no Brasil.", answer: true, explanation: "Correto. O Culex quinquefasciatus (pernilongo) é o principal vetor no Brasil, transmitindo as microfilárias ao picar humanos infectados." },
+      { text: "A <strong>filariose linfática</strong> causada por Wuchereria bancrofti tem o mosquito Anopheles darlingi como principal vetor no Brasil.", answer: false, explanation: "Erro: o vetor da filariose no Brasil é o CULEX quinquefasciatus. O Anopheles darlingi é vetor da malária." },
+    ]
+  },
+  {
+    category: "Helminto",
+    variants: [
+      { text: "A <strong>enterobiose</strong> (oxiurose) é causada por Enterobius vermicularis, cujo principal sintoma é o prurido anal noturno.", answer: true, explanation: "Correto. A fêmea migra à noite para a região perianal para postura dos ovos, causando prurido intenso que facilita a autoinfecção por via fecal-oral." },
+      { text: "A <strong>tricuríase</strong> é causada por Enterobius vermicularis, cujo principal sintoma é o prurido anal noturno.", answer: false, explanation: "Erro: o prurido anal noturno é característico da ENTEROBIOSE (E. vermicularis). A tricuríase é causada por Trichuris trichiura e causa diarreia e prolapso retal." },
+    ]
+  },
+  {
+    category: "Helminto",
+    variants: [
+      { text: "A <strong>larva migrans visceral</strong> é causada principalmente por Toxocara canis, um parasito de cão que acidentalmente infecta humanos.", answer: true, explanation: "Correto. O Toxocara canis tem o cão como hospedeiro definitivo; nos humanos (hospedeiros acidentais), as larvas migram para vísceras, olhos e SNC sem completar o ciclo." },
+      { text: "A <strong>larva migrans cutânea</strong> é causada principalmente por Toxocara canis, um parasito de cão que acidentalmente infecta humanos.", answer: false, explanation: "Erro: o Toxocara canis causa larva migrans VISCERAL. A larva migrans CUTÂNEA é causada por Ancylostoma braziliense/caninum (bicho geográfico)." },
+    ]
+  },
+  {
+    category: "Helminto",
+    variants: [
+      { text: "A <strong>strongiloidíase</strong> é única entre os helmintos por apresentar autoinfecção interna, podendo persistir décadas no hospedeiro.", answer: true, explanation: "Correto. O Strongyloides stercoralis pode completar ciclo dentro do hospedeiro (autoinfecção), o que explica a persistência e o risco de hiperinfecção em imunocomprometidos." },
+      { text: "A <strong>ascaridíase</strong> é única entre os helmintos por apresentar autoinfecção interna, podendo persistir décadas no hospedeiro.", answer: false, explanation: "Erro: a autoinfecção interna é característica do STRONGYLOIDES stercoralis. O Ascaris lumbricoides não realiza autoinfecção; necessita de ovos do ambiente." },
+    ]
+  },
+
+  // PROTOZOÁRIOS
+  {
+    category: "Protozoário",
+    variants: [
+      { text: "A <strong>doença de Chagas</strong> é causada por Trypanosoma cruzi, transmitida principalmente pelo barbeiro (Triatoma infestans) através das fezes contaminadas na pele.", answer: true, explanation: "Correto. A transmissão vetorial ocorre quando o barbeiro defeca após a picada e o humano coça, introduzindo as formas tripomastigotas metacíclicas presentes nas fezes." },
+      { text: "A <strong>doença de Chagas</strong> é causada por Trypanosoma brucei, transmitida principalmente pelo barbeiro (Triatoma infestans) através das fezes contaminadas na pele.", answer: false, explanation: "Erro: a doença de Chagas é causada por T. CRUZI. O T. brucei causa a doença do sono (tripanossomíase africana), transmitida pela mosca tsé-tsé." },
+    ]
+  },
+  {
+    category: "Protozoário",
+    variants: [
+      { text: "A <strong>malária</strong> causada por Plasmodium falciparum é a mais grave por invadir eritrócitos de qualquer idade e causar obstrução microvascular.", answer: true, explanation: "Correto. O P. falciparum invade eritrócitos de todas as idades, produz altas parasitemias e causa sequestro de hemácias em capilares cerebrais, levando à malária cerebral." },
+      { text: "A <strong>malária</strong> causada por Plasmodium vivax é a mais grave por invadir eritrócitos de qualquer idade e causar obstrução microvascular.", answer: false, explanation: "Erro: a malária mais grave é causada por P. FALCIPARUM. O P. vivax prefere reticulócitos (hemácias jovens), causando formas menos letais mas com risco de recidivas." },
+    ]
+  },
+  {
+    category: "Protozoário",
+    variants: [
+      { text: "A <strong>leishmaniose visceral</strong> (calazar) é causada por Leishmania chagasi/infantum e transmitida pelo flebotomíneo Lutzomyia longipalpis.", answer: true, explanation: "Correto. A Lutzomyia longipalpis é o principal vetor no Brasil; o parasito infecta macrófagos de órgãos como fígado, baço e medula óssea." },
+      { text: "A <strong>leishmaniose visceral</strong> (calazar) é causada por Leishmania braziliensis e transmitida pelo flebotomíneo Lutzomyia longipalpis.", answer: false, explanation: "Erro: a leishmaniose visceral é causada por L. CHAGASI/INFANTUM. A L. braziliensis causa leishmaniose tegumentar/mucosa." },
+    ]
+  },
+  {
+    category: "Protozoário",
+    variants: [
+      { text: "A <strong>amebíase</strong> é causada por Entamoeba histolytica, e a transmissão ocorre por ingestão de cistos em água ou alimentos contaminados.", answer: true, explanation: "Correto. Os cistos resistem ao ambiente e são a forma infectante; ao chegarem ao intestino grosso, se transformam em trofozoítos que podem invadir a parede intestinal." },
+      { text: "A <strong>giardíase</strong> é causada por Entamoeba histolytica, e a transmissão ocorre por ingestão de cistos em água ou alimentos contaminados.", answer: false, explanation: "Erro: a Entamoeba histolytica causa AMEBÍASE. A giardíase é causada por Giardia lamblia/intestinalis, também por ingestão de cistos, mas provoca síndrome disabsortiva no intestino delgado." },
+    ]
+  },
+  {
+    category: "Protozoário",
+    variants: [
+      { text: "A <strong>toxoplasmose</strong> congênita ocorre quando a mulher adquire a infecção primária durante a gestação, transmitindo os taquizoítos via placenta ao feto.", answer: true, explanation: "Correto. A primoinfecção gestacional é o risco; mulheres com infecção prévia geralmente estão protegidas. Os taquizoítos atravessam a placenta, podendo causar hidrocefalia, coriorretinite e calcificações." },
+      { text: "A <strong>toxoplasmose</strong> congênita ocorre quando a mulher adquire infecções repetidas durante a gestação, transmitindo os bradizoítos via placenta ao feto.", answer: false, explanation: "Erro duplo: o risco é a PRIMOINFECÇÃO (não repetida), e a forma transmitida via placenta são os TAQUIZOÍTOS (fase ativa), não bradizoítos (que ficam em cistos teciduais)." },
+    ]
+  },
+  {
+    category: "Protozoário",
+    variants: [
+      { text: "Na <strong>giardíase</strong>, a forma infectante é o cisto e a forma patogênica ativa é o trofozoíto, que se fixa na mucosa do intestino delgado.", answer: true, explanation: "Correto. Os cistos são ingeridos, excistam no duodeno/jejuno e os trofozoítos se fixam por disco suctorial, interferindo na absorção de gorduras e vitaminas lipossolúveis." },
+      { text: "Na <strong>amebíase</strong>, a forma infectante é o cisto e a forma patogênica ativa é o trofozoíto, que se fixa na mucosa do intestino delgado.", answer: false, explanation: "Erro: esse perfil é da GIARDÍASE (G. lamblia). Na amebíase, os trofozoítos atuam no INTESTINO GROSSO, não delgado, podendo causar úlceras e disenteria." },
+    ]
+  },
+  {
+    category: "Protozoário",
+    variants: [
+      { text: "A <strong>tricomoníase</strong> é causada por Trichomonas vaginalis, um protozoário flagelado transmitido exclusivamente por via sexual.", answer: true, explanation: "Correto. O T. vaginalis é um protozoário flagelado anaeróbio que não forma cistos, sobrevive pouco fora do hospedeiro e tem transmissão predominantemente sexual." },
+      { text: "A <strong>tricomoníase</strong> é causada por Trichomonas vaginalis, um protozoário ciliado transmitido por ingestão de água contaminada.", answer: false, explanation: "Erro duplo: T. vaginalis é um protozoário FLAGELADO (não ciliado) e sua transmissão é SEXUAL, não por água. O T. vaginalis não possui forma cística." },
+    ]
+  },
+
+  // ECTOPARASITAS
+  {
+    category: "Ectoparasita",
+    variants: [
+      { text: "A <strong>sarna (escabiose)</strong> é causada pelo ácaro Sarcoptes scabiei, que escava túneis na epiderme para postura de ovos, causando prurido intenso noturno.", answer: true, explanation: "Correto. A fêmea fecundada escava a camada córnea, causa hipersensibilidade tipo IV e o prurido noturno intenso é característico, piorando pelo calor do corpo." },
+      { text: "A <strong>pediculose do couro cabeludo</strong> é causada pelo ácaro Sarcoptes scabiei, que escava túneis na epiderme para postura de ovos.", answer: false, explanation: "Erro: Sarcoptes scabiei causa SARNA. A pediculose do couro cabeludo é causada pelo inseto Pediculus humanus capitis (piolho)." },
+    ]
+  },
+  {
+    category: "Ectoparasita",
+    variants: [
+      { text: "O <strong>Pediculus humanus corporis</strong> (piolho do corpo) é vetor de doenças como tifo epidêmico (Rickettsia prowazekii) e febre das trincheiras.", answer: true, explanation: "Correto. O piolho do corpo, ao contrário do piolho da cabeça, é vetor de riquetsioses; transmite pela contaminação fecal nas lesões de coçadura." },
+      { text: "O <strong>Pediculus humanus capitis</strong> (piolho da cabeça) é vetor de doenças como tifo epidêmico (Rickettsia prowazekii) e febre das trincheiras.", answer: false, explanation: "Erro: o vetor dessas doenças é o P. humanus CORPORIS (piolho do corpo). O P. h. capitis raramente transmite patógenos sistêmicos." },
+    ]
+  },
+  {
+    category: "Ectoparasita",
+    variants: [
+      { text: "O <strong>carrapato Ixodes</strong> é o principal vetor da Doença de Lyme (Borrelia burgdorferi) no hemisfério norte, com transmissão durante o repasto sanguíneo.", answer: true, explanation: "Correto. O Ixodes scapularis (EUA) e I. ricinus (Europa) são vetores; a transmissão exige picada prolongada (>24h), pois a bactéria migra das glândulas salivares durante o repasto." },
+      { text: "O <strong>carrapato Amblyomma</strong> é o principal vetor da Doença de Lyme (Borrelia burgdorferi) no hemisfério norte.", answer: false, explanation: "Erro: o vetor da Doença de Lyme é o carrapato do gênero IXODES. O Amblyomma cajennense é vetor da febre maculosa brasileira (Rickettsia rickettsii)." },
+    ]
+  },
+  {
+    category: "Ectoparasita",
+    variants: [
+      { text: "A <strong>febre maculosa brasileira</strong> é transmitida por carrapatos do gênero Amblyomma e causada por Rickettsia rickettsii.", answer: true, explanation: "Correto. O Amblyomma cajennense é o principal vetor no Brasil; a R. rickettsii causa febre alta, exantema petequial e é potencialmente fatal sem tratamento com doxiciclina." },
+      { text: "A <strong>febre maculosa brasileira</strong> é transmitida por carrapatos do gênero Ixodes e causada por Rickettsia rickettsii.", answer: false, explanation: "Erro: no Brasil, o principal vetor é o carrapato AMBLYOMMA cajennense (carrapato-estrela). O Ixodes é vetor da Doença de Lyme." },
+    ]
+  },
+  {
+    category: "Ectoparasita",
+    variants: [
+      { text: "O <strong>Tunga penetrans</strong> (bicho-de-pé) é uma pulga cujas fêmeas fertilizadas penetram na pele, geralmente nos espaços interdigitais dos pés.", answer: true, explanation: "Correto. Apenas a fêmea fertilizada penetra na pele para completar o desenvolvimento dos ovos, causando tungiose com inflamação local e risco de infecções secundárias." },
+      { text: "O <strong>Ctenocephalides felis</strong> (pulga do gato) é uma pulga cujas fêmeas fertilizadas penetram na pele, geralmente nos espaços interdigitais dos pés.", answer: false, explanation: "Erro: quem penetra a pele é o TUNGA PENETRANS (bicho-de-pé). O C. felis é parasita externo que permanece sobre a pele/pelagem do hospedeiro, sem penetrá-la." },
+    ]
+  },
+  {
+    category: "Ectoparasita",
+    variants: [
+      { text: "O <strong>Demodex folliculorum</strong> é um ácaro comensal encontrado nos folículos pilosos humanos que pode tornar-se patogênico em imunocomprometidos.", answer: true, explanation: "Correto. O D. folliculorum coloniza folículos da face na maioria dos adultos sem causar doenças; em imunossupressão ou rosácea, pode causar demodicose com inflamação folicular." },
+      { text: "O <strong>Sarcoptes scabiei</strong> é um ácaro comensal encontrado nos folículos pilosos humanos que pode tornar-se patogênico em imunocomprometidos.", answer: false, explanation: "Erro: o ácaro dos folículos pilosos é o DEMODEX FOLLICULORUM. O S. scabiei é sempre patogênico, escava a epiderme e causa sarna; nunca é considerado comensal." },
+    ]
+  },
+];
+
+// =============================================
+// ESTADO DO QUIZ
+// =============================================
+let questions = [];
+let currentIdx = 0;
+let userAnswers = [];
+let selectedAnswer = null;
+let awaitingJustification = false;
+
+// =============================================
+// GERA AS 10 QUESTÕES SORTEANDO VARIANTES
+// =============================================
+function generateQuestions() {
+  // Garante ao menos 3 de cada categoria
+  const helmintos = QUESTION_BANK.filter(q => q.category === "Helminto");
+  const proto = QUESTION_BANK.filter(q => q.category === "Protozoário");
+  const ecto = QUESTION_BANK.filter(q => q.category === "Ectoparasita");
+
+  const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+
+  const picked = [
+    ...shuffle(helmintos).slice(0, 3),
+    ...shuffle(proto).slice(0, 4),
+    ...shuffle(ecto).slice(0, 3),
+  ];
+
+  // Para cada questão, sorteia uma variante aleatória
+  questions = shuffle(picked).map(q => {
+    const v = q.variants[Math.floor(Math.random() * q.variants.length)];
+    return { category: q.category, ...v };
+  });
+}
+
+// =============================================
+// CONTROLE DE TELAS
+// =============================================
+function showScreen(id) {
+  ['start-screen','loading-screen','quiz-screen','result-screen'].forEach(s => {
+    document.getElementById(s).style.display = 'none';
+  });
+  document.getElementById(id).style.display = 'block';
+}
+
+// =============================================
+// INÍCIO
+// =============================================
+document.getElementById('btn-start').addEventListener('click', async () => {
+  document.getElementById('btn-start').disabled = true;
+  showScreen('loading-screen');
+
+  // Simula tempo de "geração" para ux
+  await new Promise(r => setTimeout(r, 1200 + Math.random() * 800));
+
+  generateQuestions();
+  currentIdx = 0;
+  userAnswers = [];
+  showScreen('quiz-screen');
+  renderQuestion();
+});
+
+// =============================================
+// RENDERIZA QUESTÃO
+// =============================================
+function renderQuestion() {
+  const q = questions[currentIdx];
+  selectedAnswer = null;
+  awaitingJustification = false;
+
+  // Progress
+  const pct = (currentIdx / 10) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+
+  // Header
+  document.getElementById('q-number').textContent = `QUESTÃO ${currentIdx + 1} / 10`;
+  document.getElementById('q-category').textContent = q.category;
+
+  // Texto
+  document.getElementById('question-text').innerHTML = q.text;
+
+  // Reset botões
+  const btnTrue = document.getElementById('btn-true');
+  const btnFalse = document.getElementById('btn-false');
+  btnTrue.className = 'btn-answer';
+  btnFalse.className = 'btn-answer';
+  btnTrue.disabled = false;
+  btnFalse.disabled = false;
+
+  // Justificativa
+  const jSection = document.getElementById('justify-section');
+  jSection.style.display = 'none';
+  document.getElementById('justify-input').value = '';
+
+  // Confirm
+  const btnConf = document.getElementById('btn-confirm');
+  btnConf.style.display = 'block';
+  btnConf.disabled = true;
+
+  // Feedback
+  document.getElementById('feedback-box').style.display = 'none';
+
+  // Next
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+// =============================================
+// SELECIONA V/F
+// =============================================
+function selectAnswer(isTrue) {
+  selectedAnswer = isTrue;
+
+  const btnTrue = document.getElementById('btn-true');
+  const btnFalse = document.getElementById('btn-false');
+  btnTrue.className = 'btn-answer' + (isTrue ? ' selected-true' : '');
+  btnFalse.className = 'btn-answer' + (!isTrue ? ' selected-false' : '');
+
+  // Se FALSO, exige justificativa
+  const jSection = document.getElementById('justify-section');
+  const justInput = document.getElementById('justify-input');
+  if (!isTrue) {
+    jSection.style.display = 'block';
+    justInput.disabled = false;
+    justInput.focus();
+    awaitingJustification = true;
+    checkConfirmEnabled();
+  } else {
+    jSection.style.display = 'none';
+    justInput.value = '';
+    awaitingJustification = false;
+    document.getElementById('btn-confirm').disabled = false;
+  }
+}
+
+// =============================================
+// VERIFICA SE PODE CONFIRMAR
+// =============================================
+document.getElementById('justify-input').addEventListener('input', checkConfirmEnabled);
+
+function checkConfirmEnabled() {
+  const hasJust = document.getElementById('justify-input').value.trim().length >= 5;
+  let canConfirm = false;
+  if (selectedAnswer === true) {
+    canConfirm = true;
+  } else if (selectedAnswer === false) {
+    canConfirm = hasJust;
+  }
+  document.getElementById('btn-confirm').disabled = !canConfirm;
+}
+
+// =============================================
+// CONFIRMA RESPOSTA E CHAMA IA
+// =============================================
+async function confirmAnswer() {
+  const q = questions[currentIdx];
+  const userIsTrue = selectedAnswer;
+  const justification = document.getElementById('justify-input').value.trim();
+  const isCorrect = (userIsTrue === q.answer);
+
+  // Desabilita interação
+  document.getElementById('btn-true').disabled = true;
+  document.getElementById('btn-false').disabled = true;
+  document.getElementById('btn-confirm').disabled = true;
+  document.getElementById('justify-input').disabled = true;
+
+  // Mostra loading no feedback
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box ' + (isCorrect ? 'correct' : 'incorrect');
+  fb.style.display = 'block';
+  document.getElementById('fb-icon').textContent = isCorrect ? '✓' : '✗';
+  document.getElementById('fb-title-text').textContent = isCorrect ? 'Correto!' : 'Incorreto';
+  document.getElementById('fb-body').textContent = 'Gerando feedback…';
+
+  // Salva resposta inicial
+  userAnswers.push({
+    question: q,
+    userAnswer: userIsTrue,
+    justification: justification,
+    isCorrect: isCorrect,
+    aiFeedback: ''
+  });
+
+  // Chama IA para feedback
+  try {
+    const prompt = buildPrompt(q, userIsTrue, justification, isCorrect);
+    const resp = await callClaude(prompt);
+    const feedback = resp;
+    userAnswers[userAnswers.length - 1].aiFeedback = feedback;
+    document.getElementById('fb-body').textContent = feedback;
+  } catch(e) {
+    // Fallback para explicação do banco
+    document.getElementById('fb-body').textContent = q.explanation;
+    userAnswers[userAnswers.length - 1].aiFeedback = q.explanation;
+  }
+
+  document.getElementById('btn-next').style.display = 'block';
+}
+
+// =============================================
+// PROMPT PARA IA
+// =============================================
+function buildPrompt(q, userIsTrue, justification, isCorrect) {
+  const category = q.category;
+  const qText = q.text.replace(/<[^>]*>/g, '');
+  const correctAnswer = q.answer ? 'VERDADEIRO' : 'FALSO';
+  const userAnswerStr = userIsTrue ? 'VERDADEIRO' : 'FALSO';
+
+  let prompt = `Você é professor de Microbiologia e Parasitologia. O aluno respondeu uma questão de V/F.
+
+AFIRMAÇÃO: "${qText}"
+RESPOSTA CORRETA: ${correctAnswer}
+RESPOSTA DO ALUNO: ${userAnswerStr}
+RESULTADO: ${isCorrect ? 'ACERTOU' : 'ERROU'}`;
+
+  if (!userIsTrue && justification) {
+    prompt += `\nJUSTIFICATIVA DO ALUNO: "${justification}"`;
+  }
+
+  prompt += `
+
+Dê um feedback direto de 2-3 frases (máximo 80 palavras):
+- Se ACERTOU: confirme brevemente e destaque o ponto-chave da afirmação.
+- Se ERROU: explique claramente o erro e corrija com a informação correta.
+- Se há justificativa do aluno: avalie se é adequada ou aponte o que está errado nela.
+Seja objetivo, use linguagem técnica de parasitologia. Não use markdown nem listas.`;
+
+  return prompt;
+}
+
+// =============================================
+// CHAMA A API CLAUDE
+// =============================================
+async function callClaude(userPrompt) {
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      messages: [{ role: "user", content: userPrompt }]
+    })
+  });
+  const data = await response.json();
+  if (data.content && data.content[0]) return data.content[0].text;
+  throw new Error("No response");
+}
+
+// =============================================
+// PRÓXIMA QUESTÃO
+// =============================================
+function nextQuestion() {
+  currentIdx++;
+  if (currentIdx >= 10) {
+    showResults();
+  } else {
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+// =============================================
+// RESULTADOS
+// =============================================
+function showResults() {
+  const correct = userAnswers.filter(a => a.isCorrect).length;
+  const pct = (correct / 10) * 100;
+
+  // Score ring
+  const circumference = 276.46;
+  const offset = circumference - (pct / 100) * circumference;
+  setTimeout(() => {
+    document.getElementById('score-circle').style.strokeDashoffset = offset;
+  }, 100);
+
+  document.getElementById('score-number').innerHTML = `${correct}<span>/ 10</span>`;
+
+  const msgs = [
+    [0,3, "Precisa revisar mais…", "Volte aos materiais de helmintologia e protozoários."],
+    [4,5, "Progresso razoável", "Você está no caminho certo. Revise os ciclos de vida."],
+    [6,7, "Bom desempenho!", "Conhece bem os conceitos. Revise os pontos errados."],
+    [8,9, "Ótimo resultado!", "Domínio sólido do conteúdo. Quase perfeito!"],
+    [10,10, "Excelente! 🎓", "Domínio completo — está pronto para a prova final!"],
+  ];
+  const [, , title, sub] = msgs.find(([min,max]) => correct >= min && correct <= max);
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = sub;
+
+  // Review
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  userAnswers.forEach((a, i) => {
+    const div = document.createElement('div');
+    div.className = `review-item ${a.isCorrect ? 'r-correct' : 'r-incorrect'}`;
+    const qText = a.question.text.replace(/<[^>]*>/g, '');
+    div.innerHTML = `
+      <p class="review-q"><strong>${i+1}.</strong> ${qText}</p>
+      <div class="review-meta">
+        <span class="${a.isCorrect ? 'tag-correct' : 'tag-incorrect'}">${a.isCorrect ? '✓ Correto' : '✗ Incorreto'}</span>
+        <span class="tag-answer">Sua resposta: ${a.userAnswer ? 'Verdadeiro' : 'Falso'}</span>
+        <span class="tag-answer">Gabarito: ${a.question.answer ? 'Verdadeiro' : 'Falso'}</span>
+      </div>
+      ${a.aiFeedback ? `<p class="review-feedback">${a.aiFeedback}</p>` : ''}
+    `;
+    list.appendChild(div);
+  });
+
+  showScreen('result-screen');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Anima progress bar para 100%
+  document.getElementById('progress-bar').style.width = '100%';
+}
+
+// =============================================
+// REINICIAR
+// =============================================
+function restart() {
+  document.getElementById('btn-start').disabled = false;
+  showScreen('start-screen');
+}
+</script>
+</body>
+</html>
